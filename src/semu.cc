@@ -21,7 +21,8 @@ namespace semu
         PC = 0;
         Registers.resize(32, 0);
         Memory.resize(64 * 1024 * 1024, 0);
-        
+        VirtualPageBase = 0x80000000;
+
         std::cout << "[INFO]: Register and memory initialized finished." << "\n";
         std::copy(Image.begin() + Offset, Image.end(), Memory.begin());
         std::cout << "[INFO]: " << "Loaded image." << '\n';
@@ -34,19 +35,33 @@ namespace semu
 
     int Cpu::Run()
     {
-        for (size_t i = 0; i < 16; i++)
+        for (size_t i = 0; i < 4; i++)
         {
             int Result = Step();
-            
         }
         
         return 0;
     }
 
+    
     int Cpu::Step()
     {
         std::uint32_t IR = Fetch();
+        std::uint32_t OPCode = (IR & 0x7f);
+        std::cout << "[INFO]: OPCODE " << std::bitset<8>(OPCode) << '\n';
+        std::cout << "[INFO]: IR " << std::bitset<32>(IR) << '\n';
+        // https://github.com/riscv/riscv-opcodes/blob/master/
+        // Chapter 37 in riscv manual 2024/04
+
+        switch (OPCode)
+        {
+        case 0x00:
+
+            break;
         
+        default:
+            break;
+        }
 
         PC += 4;
         return 0;
@@ -72,7 +87,7 @@ namespace semu
         // std::cout << "[INFO]: " << "After: \t" <<
         //          std::bitset<32>((U3) | (U2 << 8) | (U1 << 16) | (U0 << 24)) << '\n';
 
-        return ((U3) | (U2 << 8) | (U1 << 16) | (U0 << 24));
+        return ((U0) | (U1 << 8) | (U2 << 16) | (U3 << 24));
     }
     
     void Cpu::MemoryLayout()

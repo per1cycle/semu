@@ -24,17 +24,7 @@ int main(int argc, char const *argv[])
     
     semu::Cpu cpu = semu::Cpu(Image, Offset);
     cpu.Run();
-    cpu.MemoryLayout();
-    // std::cout << Image.size() << '\n';
-    
-    // for(size_t i = 0; i + Offset < Image.size(); i += 1)
-    // {
-    //     if(i && i % 32 == 0)
-    //     {
-    //         std::cout << '\n';
-    //     }
-    //     std::cout << std::setw(2) << std::setfill('0') << std::hex << static_cast<uint16_t>(Image[i + Offset]);
-    // }
+    // cpu.MemoryLayout();
 
     return 0;
 }

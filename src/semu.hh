@@ -17,6 +17,7 @@ private:
     std::uint32_t VirtualPageBase;
 
 // registers
+// https://en.wikichip.org/wiki/risc-v/registers
 private:
     std::vector<std::uint64_t> Registers;
     std::uint64_t PC;
@@ -31,7 +32,7 @@ public:
     int Run();
     int Step();
     std::uint32_t Fetch();
-
+    
 // helper and tools for debugging.
 public:
     void MemoryLayout();
