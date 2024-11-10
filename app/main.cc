@@ -20,13 +20,13 @@ std::vector<std::uint8_t> LoadImage(std::string FileName)
 // notice the endian.
 int main(int argc, char const *argv[])
 {
-    std::vector<std::uint8_t> Image = LoadImage("/home/per1cycle/Projects/Github/dev/semu/riscv-tests/isa/rv64ui-p-add");
+    std::vector<std::uint8_t> Image = LoadImage("/home/z/Projects/Github/dev/semu/riscv-tests/isa/rv64ui-p-add");
     size_t Offset = 0x1000;
     std::cout << Image.size() << '\n';
     
-    for(size_t i = 0; i + Offset < Image.size(); i += 4)
+    for(size_t i = 0; i + Offset < Image.size(); i += 1)
     {
-        if(i && i % 16 == 0)
+        if(i && i % 32 == 0)
         {
             std::cout << '\n';
         }
