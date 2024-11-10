@@ -1,6 +1,5 @@
 #include "semu.hh"
 
-#include <iomanip>
 #include <iostream>
 
 /**
@@ -22,16 +21,20 @@ int main(int argc, char const *argv[])
 {
     std::vector<std::uint8_t> Image = LoadImage("/home/z/Projects/Github/dev/semu/riscv-tests/isa/rv64ui-p-add");
     size_t Offset = 0x1000;
-    std::cout << Image.size() << '\n';
     
-    for(size_t i = 0; i + Offset < Image.size(); i += 1)
-    {
-        if(i && i % 32 == 0)
-        {
-            std::cout << '\n';
-        }
-        std::cout << std::setw(2) << std::setfill('0') << std::hex << static_cast<uint16_t>(Image[i + Offset]);
-    }
+    semu::Cpu cpu = semu::Cpu(Image, Offset);
+    cpu.Run();
+    // cpu.MemoryLayout();
+    // std::cout << Image.size() << '\n';
+    
+    // for(size_t i = 0; i + Offset < Image.size(); i += 1)
+    // {
+    //     if(i && i % 32 == 0)
+    //     {
+    //         std::cout << '\n';
+    //     }
+    //     std::cout << std::setw(2) << std::setfill('0') << std::hex << static_cast<uint16_t>(Image[i + Offset]);
+    // }
 
     return 0;
 }
