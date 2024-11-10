@@ -24,7 +24,7 @@ int main(int argc, char const *argv[])
     
     semu::Cpu cpu = semu::Cpu(Image, Offset);
     cpu.Run();
-    // cpu.MemoryLayout();
+    cpu.MemoryLayout();
     // std::cout << Image.size() << '\n';
     
     // for(size_t i = 0; i + Offset < Image.size(); i += 1)

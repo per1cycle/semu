@@ -16,6 +16,7 @@ private:
     std::vector<std::uint8_t> Memory;
     std::uint32_t VirtualPageBase;
 
+// registers
 private:
     std::vector<std::uint64_t> Registers;
     std::uint64_t PC;
@@ -25,6 +26,7 @@ public:
     Cpu(const std::vector<std::uint8_t>& Image, std::uint32_t OFfset);
     ~Cpu();
 
+// core functions.
 public:
     int Run();
     int Step();
@@ -35,8 +37,6 @@ public:
     void MemoryLayout();
     
 };
-
-
 
 } // namespace semu
 

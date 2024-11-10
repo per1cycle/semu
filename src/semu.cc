@@ -17,15 +17,14 @@ namespace semu
     Cpu::Cpu(const std::vector<std::uint8_t>& Image, std::uint32_t Offset)
     {
         std::cout << "[INFO]: Cpu initing." << "\n";
+        
         PC = 0;
         Registers.resize(32, 0);
         Memory.resize(64 * 1024 * 1024, 0);
+        
         std::cout << "[INFO]: Register and memory initialized finished." << "\n";
-        for(size_t i = 0; i < Image.size(); i ++)
-        {
-            Memory[i] = Image[i + Offset];
-        }
-        std::cout << "[INFO]: " << "Load image." << '\n';
+        std::copy(Image.begin() + Offset, Image.end(), Memory.begin());
+        std::cout << "[INFO]: " << "Loaded image." << '\n';
     }
 
     Cpu::~Cpu()
@@ -38,7 +37,7 @@ namespace semu
         for (size_t i = 0; i < 16; i++)
         {
             int Result = Step();
-
+            
         }
         
         return 0;
@@ -47,6 +46,8 @@ namespace semu
     int Cpu::Step()
     {
         std::uint32_t IR = Fetch();
+        
+
         PC += 4;
         return 0;
     }
@@ -66,10 +67,10 @@ namespace semu
         std::uint8_t U2 = Memory[PC + 2];
         std::uint8_t U3 = Memory[PC + 3];
 
-        std::cout << "[INFO]: " << "Before:\t" <<
-                std::bitset<32>((U0) | (U1 << 8) | (U2 << 16) | (U3 << 24))  << '\n';
-        std::cout << "[INFO]: " << "After: \t" <<
-                 std::bitset<32>((U3) | (U2 << 8) | (U1 << 16) | (U0 << 24)) << '\n';
+        // std::cout << "[INFO]: " << "Before:\t" <<
+        //         std::bitset<32>((U0) | (U1 << 8) | (U2 << 16) | (U3 << 24))  << '\n';
+        // std::cout << "[INFO]: " << "After: \t" <<
+        //          std::bitset<32>((U3) | (U2 << 8) | (U1 << 16) | (U0 << 24)) << '\n';
 
         return ((U3) | (U2 << 8) | (U1 << 16) | (U0 << 24));
     }
