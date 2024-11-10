@@ -1,23 +1,20 @@
 #include "semu.hh"
 
 #include <bitset>
-#include <iostream>
 
 namespace semu
 {
     Cpu::Cpu()
     {
-        std::cout << "[INFO]: Cpu initing." << "\n";
-        PC = 0;
+        PC = 0x0;
         Registers.resize(32, 0);
         Memory.resize(64 * 1024 * 1024, 0);
-        std::cout << "[INFO]: Register and memory initialized finished." << "\n";
     }
 
     Cpu::Cpu(const std::vector<std::uint8_t>& Image, std::uint32_t Offset)
     {
-        std::cout << "[INFO]: Cpu initing." << "\n";
-        
+        // std::cout << "[INFO]: Cpu initing." << "\n";
+        Info("Cpu initing", 1, 'b');
         PC = 0;
         Registers.resize(32, 0);
         Memory.resize(64 * 1024 * 1024, 0);
@@ -25,7 +22,6 @@ namespace semu
 
         std::cout << "[INFO]: Register and memory initialized finished." << "\n";
         std::copy(Image.begin() + Offset, Image.end(), Memory.begin());
-        std::cout << "[INFO]: " << "Loaded image." << '\n';
     }
 
     Cpu::~Cpu()
@@ -48,17 +44,27 @@ namespace semu
     {
         std::uint32_t IR = Fetch();
         std::uint32_t OPCode = (IR & 0x7f);
-        std::cout << "[INFO]: OPCODE " << std::bitset<8>(OPCode) << '\n';
-        std::cout << "[INFO]: IR " << std::bitset<32>(IR) << '\n';
+        Info("OPCODE ", std::bitset<8>(OPCode), "IR", std::bitset<32>(IR));
         // https://github.com/riscv/riscv-opcodes/blob/master/
         // Chapter 37 in riscv manual 2024/04
 
         switch (OPCode)
         {
-        case 0x00:
+        // rv32i base
+        case 0x37: //LUI
+            break;
+        case 0x17: // AUIPC
+            break;
+
+        case 0x6f: // JAL
+            break;
+        
+        case 0x67: // JALR
 
             break;
         
+        case 0x63: //BEQ
+
         default:
             break;
         }
@@ -81,12 +87,9 @@ namespace semu
         std::uint8_t U1 = Memory[PC + 1];
         std::uint8_t U2 = Memory[PC + 2];
         std::uint8_t U3 = Memory[PC + 3];
-
-        // std::cout << "[INFO]: " << "Before:\t" <<
-        //         std::bitset<32>((U0) | (U1 << 8) | (U2 << 16) | (U3 << 24))  << '\n';
-        // std::cout << "[INFO]: " << "After: \t" <<
-        //          std::bitset<32>((U3) | (U2 << 8) | (U1 << 16) | (U0 << 24)) << '\n';
-
+        
+        Info("Before",  std::bitset<32>((U0) | (U1 << 8) | (U2 << 16) | (U3 << 24)),
+             "After",   std::bitset<32>((U3) | (U2 << 8) | (U1 << 16) | (U0 << 24)));
         return ((U0) | (U1 << 8) | (U2 << 16) | (U3 << 24));
     }
     

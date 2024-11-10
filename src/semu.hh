@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <vector>
 #include <fstream>
+#include <iostream>
 
 #include <cstdint>
 
@@ -17,7 +18,7 @@ private:
     std::uint32_t VirtualPageBase;
 
 // registers
-// https://en.wikichip.org/wiki/risc-v/registers
+// register alias name https://en.wikichip.org/wiki/risc-v/registers
 private:
     std::vector<std::uint64_t> Registers;
     std::uint64_t PC;
@@ -36,7 +37,18 @@ public:
 // helper and tools for debugging.
 public:
     void MemoryLayout();
-    
+    template<typename T, typename...Ts>
+    void Info(T&& Message, Ts&& ... Further){
+        if constexpr (sizeof...(Ts) == 0)
+        {
+            std::cout << "                                                                                                      [INFO]: " << Message << "\n";
+        }
+        else 
+        {
+            std::cout << "[INFO]: " << Message << "\n";
+            Info(std::forward<Ts>(Further)...);
+        }
+    }
 };
 
 } // namespace semu
