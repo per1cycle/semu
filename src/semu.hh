@@ -1,6 +1,13 @@
 #ifndef SEMU_HH
 #define SEMU_HH
 
+#define OP(IR)      ((IR) & 0x7f)
+#define RD(IR)      (((IR) >> 7) & 0x1f)
+#define RS1(IR)     (((IR) >> 15) & 0x1f)
+#define RS2(IR)     (((IR) >> 20) & 0x1f)
+#define FUNC3(IR)   (((IR) >> 12) & 0x7)
+#define FUNC7(IR)   (((IR) >> 25) & 0x3f)
+
 #include <iomanip>
 #include <vector>
 #include <fstream>
@@ -47,6 +54,18 @@ public:
         {
             std::cout << "[INFO]: " << Message << "\n";
             Info(std::forward<Ts>(Further)...);
+        }
+    }
+    template<typename T, typename...Ts>
+    void Error(T&& Message, Ts&& ... Further){
+        if constexpr (sizeof...(Ts) == 0)
+        {
+            std::cout << "[ERROR]: " << Message << "\n";
+        }
+        else 
+        {
+            std::cout << "[ERROR]: " << Message << "\n";
+            Error(std::forward<Ts>(Further)...);
         }
     }
 };
