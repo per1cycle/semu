@@ -41,7 +41,7 @@ public:
     void Info(T&& Message, Ts&& ... Further){
         if constexpr (sizeof...(Ts) == 0)
         {
-            std::cout << "                                                                                                      [INFO]: " << Message << "\n";
+            std::cout << "[INFO]: " << Message << "\n";
         }
         else 
         {

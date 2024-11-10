@@ -52,19 +52,39 @@ namespace semu
         {
         // rv32i base
         case 0x37: //LUI
+            
             break;
+
         case 0x17: // AUIPC
+            
             break;
 
         case 0x6f: // JAL
+            
             break;
         
         case 0x67: // JALR
 
             break;
         
-        case 0x63: //BEQ
+        case 0x63: // BEQ/BNE/BLT/BGE/BLTU/BGEU
 
+            break;
+        
+        case 0x03: // LB/LH/LW/LBU/LHU
+
+            break;
+
+        case 0x23: // SB/SH/SW
+
+            break;
+        
+        case 0x13: // ADDI/SLTI/SLTIU/XORI/ORI/ADDI/SLLI/SRLI/SRAI
+            
+            break;
+        case 0x22: // ADD/SUB/SLL/SLT/SLTU/XOR/SRL/SRA/OR/AND
+        
+            break;
         default:
             break;
         }
@@ -87,7 +107,7 @@ namespace semu
         std::uint8_t U1 = Memory[PC + 1];
         std::uint8_t U2 = Memory[PC + 2];
         std::uint8_t U3 = Memory[PC + 3];
-        
+
         Info("Before",  std::bitset<32>((U0) | (U1 << 8) | (U2 << 16) | (U3 << 24)),
              "After",   std::bitset<32>((U3) | (U2 << 8) | (U1 << 16) | (U0 << 24)));
         return ((U0) | (U1 << 8) | (U2 << 16) | (U3 << 24));
