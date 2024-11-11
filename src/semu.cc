@@ -29,7 +29,7 @@ Cpu::~Cpu()
 
 int Cpu::Run()
 {
-    for (size_t i = 0; i < 64; i++)
+    for (size_t i = 0; i < 128; i++)
     {
         int Result = Step();
     }
@@ -106,30 +106,30 @@ int Cpu::Step()
         }
         else if (func3 == 0x2) // SLTI
         {
-
         }
         else if (func3 == 0x3) // SLTIU
         {
-
         }
         else if (func3 == 0x4) // XORI
         {
             Registers[rd] = Registers[rs1] ^ imm;
-        }else if (func3 == 0x6) // ORI
+        }
+        else if (func3 == 0x6) // ORI
         {
             Registers[rd] = Registers[rs1] | imm;
         }
         else if (func3 == 0x7) // ANDI
         {
             Registers[rd] = Registers[rs1] & imm;
-        }else if (func3 == 0x1) // SLLI
-        {
-            Registers[rd] = Registers[rs1] & imm;
-        }else if (func3 == 0x5) // SRLI/SLAI
+        }
+        else if (func3 == 0x1) // SLLI
         {
             Registers[rd] = Registers[rs1] & imm;
         }
-
+        else if (func3 == 0x5) // SRLI/SLAI
+        {
+            Registers[rd] = Registers[rs1] & imm;
+        }
 
         break;
     }
@@ -188,13 +188,29 @@ int Cpu::Step()
         }
         break;
     }
-    case 0x73: {
+
+    // rv64i extension, in addition to rv32i
+
+    // rv32m extension.
+
+    // rv64m extension, in addition to rv32m
+
+    // rv32a extension.
+
+    // rv64a extension.
+
+    // zicsr
+    case 0x73: // CSR
+    {
         Info("CSR");
         break;
     }
-    default:
+
+    default: 
+    {
         Error(PC, "Instruction not found.", std::bitset<8>(OP(IR)));
         break;
+    }
     }
 
     PC += 4;
@@ -215,8 +231,10 @@ std::uint32_t Cpu::Fetch()
     std::uint8_t U2 = Memory[PC + 2];
     std::uint8_t U3 = Memory[PC + 3];
 
-    // Info("Before",  std::bitset<32>((U0) | (U1 << 8) | (U2 << 16) | (U3 << 24)),
-    //      "After",   std::bitset<32>((U3) | (U2 << 8) | (U1 << 16) | (U0 << 24)));
+    // Info("Before",  std::bitset<32>((U0) | (U1 << 8) | (U2 << 16) | (U3 <<
+    // 24)),
+    //      "After",   std::bitset<32>((U3) | (U2 << 8) | (U1 << 16) | (U0 <<
+    //      24)));
     return ((U0) | (U1 << 8) | (U2 << 16) | (U3 << 24));
 }
 
