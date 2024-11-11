@@ -29,9 +29,8 @@ Cpu::~Cpu()
 
 int Cpu::Run()
 {
-    for (size_t i = 0; i < 8; i++)
+    for (size_t i = 0; i < 256; i++)
     {
-        Info("PC", PC);
         int Result = Step();
     }
 
@@ -45,6 +44,7 @@ int Cpu::Step()
     // https://github.com/riscv/riscv-opcodes/blob/master/
     // Chapter 37 in riscv manual 2024/04
 
+    // Add Zicsr extension
     switch (OPCode)
     {
     // rv32i base
@@ -105,24 +105,57 @@ int Cpu::Step()
 
         if (func3 == 0) // ADD/SUB
         {
-            if (func7 == 0x00)
+            if (func7 == 0x00) // ADD
                 Registers[rd] = Registers[rs1] + Registers[rs2];
-            else if (func7 == 0x20)
+            else if (func7 == 0x20) // SUB
                 Registers[rd] = Registers[rs1] - Registers[rs2];
         }
         else if (func3 == 0x1) // SLL
         {
-            Registers[rd] = Registers[rs1] >> (Registers[rs2] & 0x1f);
+            Registers[rd] = Registers[rs1] << (Registers[rs2] & 0x1f);
         }
         else if (func3 == 0x2) // SLT
         {
-            
+            Registers[rd] =
+                static_cast<std::int64_t>(Registers[rs1]) < static_cast<std::int64_t>(Registers[rs2]) ? 1 : 0;
         }
-        // SLL
+        else if (func3 == 0x3) // SLTU
+        {
+            Registers[rd] = Registers[rs1] < Registers[rs2] ? 1 : 0;
+        }
+        else if (func3 == 0x4) // XOR
+        {
+            Registers[rd] = Registers[rs1] ^ Registers[rs2];
+        }
+        else if (func3 == 0x5) // SRL/SRA
+        {
+            // https://stackoverflow.com/questions/7622/are-the-shift-operators-arithmetic-or-logical-in-c
+            if (func7 == 0x00) // SRL
+            {
+                Registers[rd] = Registers[rs1] >> (Registers[rs2] & 0x1f);
+            }
+            else if (func7 == 0x20) // SRA
+            {
+                Registers[rd] =
+                    static_cast<std::uint64_t>(static_cast<std::int64_t>(Registers[rs1]) >> (Registers[rs2] & 0x1f));
+            }
+        }
+        else if (func3 == 0x6) // OR
+        {
+            Registers[rd] = Registers[rs1] | Registers[rs2];
+        }
+        else if (func3 == 0x7) // AND
+        {
+            Registers[rd] = Registers[rs1] & Registers[rs2];
+        }
+        break;
+    }
+    case 0x73: {
+        Info("CSR");
         break;
     }
     default:
-        Error("Instruction not found.");
+        Error(PC, "Instruction not found.", std::bitset<8>(OP(IR)));
         break;
     }
 
