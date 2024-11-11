@@ -1,8 +1,15 @@
 add_executable(
     semu
-    main.cc
+    test.cc
 )
-
 target_link_libraries(
     semu libsemu
+)
+
+add_executable(
+    linux
+    linux.cc
+)
+target_link_libraries(
+    linux libsemu
 )

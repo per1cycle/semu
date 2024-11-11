@@ -92,7 +92,7 @@ int Cpu::Step()
 
     case 0x13: // ADDI/SLTI/SLTIU/XORI/ORI/ADDI/SLLI/SRLI/SRAI
     {
-        Info("ADDI");
+        
         break;
     }
     case 0x33: // ADD/SUB/SLL/SLT/SLTU/XOR/SRL/SRA/OR/AND
@@ -165,7 +165,6 @@ int Cpu::Step()
 
 std::uint32_t Cpu::Fetch()
 {
-
     /**
      * 0    1   2   3
      * 12   34  56  78

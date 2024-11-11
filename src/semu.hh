@@ -7,6 +7,7 @@
 #define RS2(IR)     (((IR) >> 20) & 0x1f)
 #define FUNC3(IR)   (((IR) >> 12) & 0x7)
 #define FUNC7(IR)   (((IR) >> 25) & 0x3f)
+#define IMM12(IR)   (((IR) >> 20) & 0xfff)
 
 #include <iomanip>
 #include <vector>
