@@ -92,7 +92,16 @@ int Cpu::Step()
 
     case 0x13: // ADDI/SLTI/SLTIU/XORI/ORI/ADDI/SLLI/SRLI/SRAI
     {
+        std::uint8_t rd = RD(IR);
+        std::uint8_t func3 = FUNC3(IR);
+        std::uint8_t rs1 = RS1(IR);
+        std::int16_t imm = IMM12(IR);
         
+        if(func3 == 0x00) // ADDI
+        {
+            
+        }
+
         break;
     }
     case 0x33: // ADD/SUB/SLL/SLT/SLTU/XOR/SRL/SRA/OR/AND
