@@ -2,8 +2,7 @@
 
 #include <bitset>
 
-namespace semu
-{
+namespace semu {
 Cpu::Cpu()
 {
     PC = 0x0;
@@ -11,7 +10,7 @@ Cpu::Cpu()
     Memory.resize(64 * 1024 * 1024, 0);
 }
 
-Cpu::Cpu(const std::vector<std::uint8_t> &Image, std::uint32_t Offset)
+Cpu::Cpu(const std::vector<std::uint8_t>& Image, std::uint32_t Offset)
 {
     Info("Cpu initing...");
     PC = 0;
@@ -29,9 +28,9 @@ Cpu::~Cpu()
 
 int Cpu::Run()
 {
-    for (size_t i = 0; i < 128; i++)
-    {
+    for (size_t i = 0; i < 4; i++) {
         int Result = Step();
+        RegisterLayout();
     }
 
     return 0;
@@ -45,145 +44,100 @@ int Cpu::Step()
     // Chapter 37 in riscv manual 2024/04
 
     // Add Zicsr extension
-    switch (OPCode)
-    {
+    switch (OPCode) {
     // rv32i base
-    case 0x37: // LUI
-    {
+    case 0x37: { // LUI
         Info("LUI");
         break;
     }
 
-    case 0x17: // AUIPC
-    {
+    case 0x17: { // AUIPC
         Info("AUIPC");
         break;
     }
 
-    case 0x6f: // JAL
-    {
+    case 0x6f: { // JAL
         Info("JAL");
         break;
     }
 
-    case 0x67: // JALR
-    {
+    case 0x67: { // JALR
         Info("JALR");
         break;
     }
 
-    case 0x63: // BEQ/BNE/BLT/BGE/BLTU/BGEU
-    {
+    case 0x63: { // BEQ/BNE/BLT/BGE/BLTU/BGEU
         Info("BEQ");
         break;
     }
 
-    case 0x03: // LB/LH/LW/LBU/LHU
-    {
+    case 0x03: { // LB/LH/LW/LBU/LHU
         Info("LB");
         break;
     }
 
-    case 0x23: // SB/SH/SW
-    {
+    case 0x23: { // SB/SH/SW
         Info("SB");
         break;
     }
 
-    case 0x13: // ADDI/SLTI/SLTIU/XORI/ORI/ADDI/SLLI/SRLI/SRAI
-    {
+    case 0x13: { // ADDI/SLTI/SLTIU/XORI/ORI/ADDI/SLLI/SRLI/SRAI
         std::uint8_t rd = RD(IR);
         std::uint8_t rs1 = RS1(IR);
         std::uint8_t func3 = FUNC3(IR);
         std::uint8_t func7 = FUNC7(IR);
         std::int64_t imm = IMM12(IR);
-        imm = imm | ((imm & 0x800) ? 0xfffffffffffff000 : 0);
+        // imm = imm | ((imm & 0x800) ? 0xfffffffffffff000 : 0);
 
-        if (func3 == 0x00) // ADDI
-        {
-            Info("ADDI");
+        if (func3 == 0x00) { // ADDI
+            Info("ADDI", "IMM", imm);
             Registers[rd] = static_cast<std::int64_t>(Registers[rs1]) + imm;
-        }
-        else if (func3 == 0x2) // SLTI
-        {
-        }
-        else if (func3 == 0x3) // SLTIU
-        {
-        }
-        else if (func3 == 0x4) // XORI
-        {
+        } else if (func3 == 0x2) { // SLTI
+        } else if (func3 == 0x3) { // SLTIU
+        } else if (func3 == 0x4) { // XORI
             Registers[rd] = Registers[rs1] ^ imm;
-        }
-        else if (func3 == 0x6) // ORI
-        {
+        } else if (func3 == 0x6) { // ORI
             Registers[rd] = Registers[rs1] | imm;
-        }
-        else if (func3 == 0x7) // ANDI
-        {
+        } else if (func3 == 0x7) { // ANDI
             Registers[rd] = Registers[rs1] & imm;
-        }
-        else if (func3 == 0x1) // SLLI
-        {
+        } else if (func3 == 0x1) { // SLLI
             Registers[rd] = Registers[rs1] & imm;
-        }
-        else if (func3 == 0x5) // SRLI/SLAI
-        {
+        } else if (func3 == 0x5) { // SRLI/SLAI
             Registers[rd] = Registers[rs1] & imm;
         }
 
         break;
     }
-    case 0x33: // ADD/SUB/SLL/SLT/SLTU/XOR/SRL/SRA/OR/AND
-    {
+    case 0x33: { // ADD/SUB/SLL/SLT/SLTU/XOR/SRL/SRA/OR/AND
         std::uint8_t rd = RD(IR);
         std::uint8_t rs1 = RS1(IR);
         std::uint8_t rs2 = RS2(IR);
         std::uint8_t func3 = FUNC3(IR);
         std::uint8_t func7 = FUNC7(IR);
 
-        if (func3 == 0) // ADD/SUB
-        {
+        if (func3 == 0) { // ADD/SUB
             if (func7 == 0x00) // ADD
                 Registers[rd] = Registers[rs1] + Registers[rs2];
             else if (func7 == 0x20) // SUB
                 Registers[rd] = Registers[rs1] - Registers[rs2];
-        }
-        else if (func3 == 0x1) // SLL
-        {
+        } else if (func3 == 0x1) { // SLL
             Registers[rd] = Registers[rs1] << (Registers[rs2] & 0x1f);
-        }
-        else if (func3 == 0x2) // SLT
-        {
-            Registers[rd] =
-                static_cast<std::int64_t>(Registers[rs1]) < static_cast<std::int64_t>(Registers[rs2]) ? 1 : 0;
-        }
-        else if (func3 == 0x3) // SLTU
-        {
+        } else if (func3 == 0x2) { // SLT
+            Registers[rd] = static_cast<std::int64_t>(Registers[rs1]) < static_cast<std::int64_t>(Registers[rs2]) ? 1 : 0;
+        } else if (func3 == 0x3) { // SLTU
             Registers[rd] = Registers[rs1] < Registers[rs2] ? 1 : 0;
-        }
-        else if (func3 == 0x4) // XOR
-        {
+        } else if (func3 == 0x4) { // XOR
             Registers[rd] = Registers[rs1] ^ Registers[rs2];
-        }
-        else if (func3 == 0x5) // SRL/SRA
-        {
+        } else if (func3 == 0x5) { // SRL/SRA
             // https://stackoverflow.com/questions/7622/are-the-shift-operators-arithmetic-or-logical-in-c
-            if (func7 == 0x00) // SRL
-            {
+            if (func7 == 0x00) { // SRL
                 Registers[rd] = Registers[rs1] >> (Registers[rs2] & 0x1f);
+            } else if (func7 == 0x20) { // SRA
+                Registers[rd] = static_cast<std::uint64_t>(static_cast<std::int64_t>(Registers[rs1]) >> (Registers[rs2] & 0x1f));
             }
-            else if (func7 == 0x20) // SRA
-            {
-                Registers[rd] =
-                    static_cast<std::uint64_t>(static_cast<std::int64_t>(Registers[rs1]) >> (Registers[rs2] & 0x1f));
-            }
-        }
-        else if (func3 == 0x6) // OR
-        {
+        } else if (func3 == 0x6) { // OR
             Registers[rd] = Registers[rs1] | Registers[rs2];
-        }
-        else if (func3 == 0x7) // AND
-        {
+        } else if (func3 == 0x7) { // AND
             Registers[rd] = Registers[rs1] & Registers[rs2];
         }
         break;
@@ -200,14 +154,12 @@ int Cpu::Step()
     // rv64a extension.
 
     // zicsr
-    case 0x73: // CSR
-    {
+    case 0x73: { // CSR
         Info("CSR");
         break;
     }
 
-    default: 
-    {
+    default: { // INVALID
         Error(PC, "Instruction not found.", std::bitset<8>(OP(IR)));
         break;
     }
@@ -240,13 +192,24 @@ std::uint32_t Cpu::Fetch()
 
 void Cpu::MemoryLayout()
 {
-    for (size_t i = 0; i < 1024; i++)
-    {
+    Info("PC: ", PC, "Memory layout:");
+    
+    for (size_t i = 0; i < 1024; i++) {
         if (i && i % 16 == 0)
             std::cout << "\n";
         std::cout << std::setw(2) << std::setfill('0') << std::hex << static_cast<uint16_t>(Memory[i]) << ' ';
     }
     std::cout << "\n";
+}
+
+void Cpu::RegisterLayout()
+{
+    Info("PC: ", PC, "Registers layout:");
+    
+    for (size_t i = 0; i < 16; i++) {
+        std::cout << "Register#" << i << ": " << Registers[i] << "\t\t"
+                  << "Register#" << i + 16 << ": " << Registers[i + 16] << "\n";
+    }
 }
 
 } // namespace semu

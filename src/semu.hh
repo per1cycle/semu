@@ -16,55 +16,50 @@
 
 #include <cstdint>
 
-namespace semu
-{
-class Cpu
-{
+namespace semu {
+class Cpu {
     // in core memory.
-  private:
+private:
     std::vector<std::uint8_t> Memory;
     std::uint32_t VirtualPageBase;
 
     // registers
     // register alias name https://en.wikichip.org/wiki/risc-v/registers
-  private:
+private:
     std::vector<std::uint64_t> Registers;
     std::uint64_t PC;
 
-  public:
+public:
     Cpu();
-    Cpu(const std::vector<std::uint8_t> &Image, std::uint32_t OFfset);
+    Cpu(const std::vector<std::uint8_t>& Image, std::uint32_t OFfset);
     ~Cpu();
 
     // core functions.
-  public:
+public:
     int Run();
     int Step();
     std::uint32_t Fetch();
 
     // helper and tools for debugging.
-  public:
+public:
+    void RegisterLayout();
     void MemoryLayout();
-    template <typename T, typename... Ts> void Info(T &&Message, Ts &&...Further)
+    template <typename T, typename... Ts>
+    void Info(T&& Message, Ts&&... Further)
     {
-        if constexpr (sizeof...(Ts) == 0)
-        {
+        if constexpr (sizeof...(Ts) == 0) {
             std::cout << "[INFO]: " << Message << "\n";
-        }
-        else
-        {
+        } else {
             std::cout << "[INFO]: " << Message << "\n";
             Info(std::forward<Ts>(Further)...);
         }
     }
-    template <typename T, typename... Ts> void Error(T &&Message, Ts &&...Further)
+    template <typename T, typename... Ts>
+    void Error(T&& Message, Ts&&... Further)
     {
-        if constexpr (sizeof...(Ts) == 0)
-        {
+        if constexpr (sizeof...(Ts) == 0) {
             std::cout << std::hex << "[ERROR]: " << Message << "\n";
-        }
-        else
-        {
+        } else {
             std::cout << std::hex << "[ERROR]: " << Message << "\n";
             Error(std::forward<Ts>(Further)...);
         }

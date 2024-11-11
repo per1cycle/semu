@@ -25,6 +25,6 @@ int main(int argc, char const *argv[])
     semu::Cpu cpu = semu::Cpu(Image, Offset);
     cpu.Run();
     // cpu.MemoryLayout();
-
+    
     return 0;
 }
