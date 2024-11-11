@@ -16,8 +16,9 @@ jobs:
     - name: dep
       run: sudo apt install cmake gcc g++
     - name: configure
-      run: mkdir build
-      run: cd build
-      run: cmake ..
+      run: |
+        mkdir build
+        cd build
+        cmake ..
     - name: make
       run: make
