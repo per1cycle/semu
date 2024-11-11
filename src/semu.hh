@@ -61,11 +61,11 @@ public:
     void Error(T&& Message, Ts&& ... Further){
         if constexpr (sizeof...(Ts) == 0)
         {
-            std::cout << "[ERROR]: " << Message << "\n";
+            std::cout << std::hex << "[ERROR]: " << Message << "\n";
         }
         else 
         {
-            std::cout << "[ERROR]: " << Message << "\n";
+            std::cout << std::hex << "[ERROR]: " << Message << "\n";
             Error(std::forward<Ts>(Further)...);
         }
     }

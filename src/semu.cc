@@ -29,7 +29,7 @@ Cpu::~Cpu()
 
 int Cpu::Run()
 {
-    for (size_t i = 0; i < 256; i++)
+    for (size_t i = 0; i < 64; i++)
     {
         int Result = Step();
     }
@@ -93,14 +93,43 @@ int Cpu::Step()
     case 0x13: // ADDI/SLTI/SLTIU/XORI/ORI/ADDI/SLLI/SRLI/SRAI
     {
         std::uint8_t rd = RD(IR);
-        std::uint8_t func3 = FUNC3(IR);
         std::uint8_t rs1 = RS1(IR);
-        std::int16_t imm = IMM12(IR);
-        
-        if(func3 == 0x00) // ADDI
+        std::uint8_t func3 = FUNC3(IR);
+        std::uint8_t func7 = FUNC7(IR);
+        std::int64_t imm = IMM12(IR);
+        imm = imm | ((imm & 0x800) ? 0xfffffffffffff000 : 0);
+
+        if (func3 == 0x00) // ADDI
         {
-            
+            Info("ADDI");
+            Registers[rd] = static_cast<std::int64_t>(Registers[rs1]) + imm;
         }
+        else if (func3 == 0x2) // SLTI
+        {
+
+        }
+        else if (func3 == 0x3) // SLTIU
+        {
+
+        }
+        else if (func3 == 0x4) // XORI
+        {
+            Registers[rd] = Registers[rs1] ^ imm;
+        }else if (func3 == 0x6) // ORI
+        {
+            Registers[rd] = Registers[rs1] | imm;
+        }
+        else if (func3 == 0x7) // ANDI
+        {
+            Registers[rd] = Registers[rs1] & imm;
+        }else if (func3 == 0x1) // SLLI
+        {
+            Registers[rd] = Registers[rs1] & imm;
+        }else if (func3 == 0x5) // SRLI/SLAI
+        {
+            Registers[rd] = Registers[rs1] & imm;
+        }
+
 
         break;
     }
