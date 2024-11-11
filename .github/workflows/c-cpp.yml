@@ -22,6 +22,5 @@ jobs:
         cmake ..
     - name: make
       run: |
-        pwd
         cd build
         make
