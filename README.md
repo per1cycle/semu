@@ -4,7 +4,7 @@ Slow EMUlator(opposite of qemu, education purpose mainly, though it might not be
 
 ## Project structure
 ```text
-├── app
+├── app // application of semu.
 │   ├── CMakeLists.txt
 │   ├── linux.cc
 │   └── test.cc
