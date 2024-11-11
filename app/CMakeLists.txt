@@ -1,9 +1,9 @@
 add_executable(
-    semu
-    test.cc
+    test-rv32ui-p-add
+    test-rv32ui-p-add.cc
 )
 target_link_libraries(
-    semu libsemu
+    test-rv32ui-p-add libsemu
 )
 
 add_executable(

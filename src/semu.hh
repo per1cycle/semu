@@ -1,6 +1,8 @@
 #ifndef SEMU_HH
 #define SEMU_HH
 
+#define MEM_SIZE (64 * 1024 * 1024)
+
 #define OP(IR) ((IR)&0x7f)
 #define RD(IR) (((IR) >> 7) & 0x1f)
 #define RS1(IR) (((IR) >> 15) & 0x1f)
@@ -17,6 +19,13 @@
 #include <cstdint>
 
 namespace semu {
+
+enum CpuStatus {
+    OK = 0,
+    TRAP,
+    OFF
+};
+
 class Cpu {
     // in core memory.
 private:
@@ -42,9 +51,10 @@ public:
 
     // helper and tools for debugging.
 public:
+    void LoadImage(const std::string& FileName);
     void RegisterLayout();
     void MemoryLayout();
-    
+
     template <typename T, typename... Ts>
     void Info(T&& Message, Ts&&... Further)
     {
@@ -55,7 +65,7 @@ public:
             Info(std::forward<Ts>(Further)...);
         }
     }
-    
+
     template <typename T, typename... Ts>
     void Warning(T&& Message, Ts&&... Further)
     {
@@ -66,7 +76,7 @@ public:
             Info(std::forward<Ts>(Further)...);
         }
     }
-    
+
     template <typename T, typename... Ts>
     void Error(T&& Message, Ts&&... Further)
     {
@@ -77,7 +87,6 @@ public:
             Error(std::forward<Ts>(Further)...);
         }
     }
-
 };
 
 } // namespace semu

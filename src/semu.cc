@@ -5,9 +5,12 @@
 namespace semu {
 Cpu::Cpu()
 {
-    PC = 0x0;
+    Info("Cpu initing...");
+    PC = 0;
     Registers.resize(32, 0);
-    Memory.resize(64 * 1024 * 1024, 0);
+    Memory.resize(MEM_SIZE, 0);
+    VirtualPageBase = 0x80000000;
+    Info("Register and memory initialized finished.");
 }
 
 Cpu::Cpu(const std::vector<std::uint8_t>& Image, std::uint32_t Offset)
@@ -28,9 +31,11 @@ Cpu::~Cpu()
 
 int Cpu::Run()
 {
-    for (size_t i = 0; i < 512; i++) {
+    for (size_t i = 0; i < 16; i++) {
         int Result = Step();
         // RegisterLayout();
+        if (Result)
+            break;
     }
 
     return 0;
@@ -87,12 +92,14 @@ int Cpu::Step()
         std::uint32_t func3 = FUNC3(IR);
         std::uint32_t func7 = FUNC7(IR);
         std::int64_t imm = IMM12(IR);
-        // imm = imm | ((imm & 0x800) ? 0xfffffffffffff000 : 0);
+        imm = imm | ((imm & 0x800) ? 0xfffffffffffff000 : 0);
 
         if (func3 == 0x00) { // ADDI
             Registers[rd] = static_cast<std::int64_t>(Registers[rs1]) + imm;
         } else if (func3 == 0x2) { // SLTI
+            Registers[rd] = static_cast<std::int64_t>(Registers[rs1]) < imm ? 1 : 0;
         } else if (func3 == 0x3) { // SLTIU
+            Registers[rd] = Registers[rs1] < static_cast<std::uint64_t>(imm) ? 1 : 0;
         } else if (func3 == 0x4) { // XORI
             Registers[rd] = Registers[rs1] ^ imm;
         } else if (func3 == 0x6) { // ORI
@@ -100,9 +107,12 @@ int Cpu::Step()
         } else if (func3 == 0x7) { // ANDI
             Registers[rd] = Registers[rs1] & imm;
         } else if (func3 == 0x1) { // SLLI
-            Registers[rd] = Registers[rs1] & imm;
+            Registers[rd] = Registers[rs1] << (imm & 0x1f);
         } else if (func3 == 0x5) { // SRLI/SLAI
-            Registers[rd] = Registers[rs1] & imm;
+            if (func7 == 0x00) // SLRI
+                Registers[rd] = Registers[rs1] >> (imm & 0x1f);
+            else if (func7 == 0x20) // SLAI
+                Registers[rd] = static_cast<uint64_t>(static_cast<std::int64_t>(Registers[rs1]) >> (imm & 0x1f));
         }
 
         break;
@@ -188,11 +198,14 @@ std::uint32_t Cpu::Fetch()
     //      24)));
     return ((U0) | (U1 << 8) | (U2 << 16) | (U3 << 24));
 }
+void Cpu::LoadImage(const std::string& FileName)
+{
+}
 
 void Cpu::MemoryLayout()
 {
     Info("PC: ", PC, "Memory layout:");
-    
+
     for (size_t i = 0; i < 1024; i++) {
         if (i && i % 16 == 0)
             std::cout << "\n";
@@ -204,7 +217,7 @@ void Cpu::MemoryLayout()
 void Cpu::RegisterLayout()
 {
     Info("PC: ", PC, "Registers layout:");
-    
+
     for (size_t i = 0; i < 16; i++) {
         std::cout << "Register#" << i << ": " << Registers[i] << "\t\t"
                   << "Register#" << i + 16 << ": " << Registers[i + 16] << "\n";
