@@ -2,6 +2,10 @@
 rv64ima emulator for linux.
 Slow EMUlator(opposite of qemu, education purpose mainly, though it might not be that slow as it said.)
 
+## Preview
+![Debug registers](./imgs/registers.png)
+![Debug instruction](./imgs/debug.png)
+
 ## Project structure
 ```text
 ├── app // application of semu.

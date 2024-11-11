@@ -44,26 +44,40 @@ public:
 public:
     void RegisterLayout();
     void MemoryLayout();
+    
     template <typename T, typename... Ts>
     void Info(T&& Message, Ts&&... Further)
     {
         if constexpr (sizeof...(Ts) == 0) {
-            std::cout << "[INFO]: " << Message << "\n";
+            std::cout << "[\033[1;32mINFO\033[1;37m]: " << Message << "\n";
         } else {
-            std::cout << "[INFO]: " << Message << "\n";
+            std::cout << "[\033[1;32mINFO\033[1;37m]: " << Message << "\n";
             Info(std::forward<Ts>(Further)...);
         }
     }
+    
+    template <typename T, typename... Ts>
+    void Warning(T&& Message, Ts&&... Further)
+    {
+        if constexpr (sizeof...(Ts) == 0) {
+            std::cout << "[\033[1;33mWARNING\033[1;37m]: " << Message << "\n";
+        } else {
+            std::cout << "[\033[1;33mWARNING\033[1;37m]: " << Message << "\n";
+            Info(std::forward<Ts>(Further)...);
+        }
+    }
+    
     template <typename T, typename... Ts>
     void Error(T&& Message, Ts&&... Further)
     {
         if constexpr (sizeof...(Ts) == 0) {
-            std::cout << std::hex << "[ERROR]: " << Message << "\n";
+            std::cout << "[\033[1;31mERROR\033[1;37m]: " << Message << "\n";
         } else {
-            std::cout << std::hex << "[ERROR]: " << Message << "\n";
+            std::cout << "[\033[1;31mERROR\033[1;37m]: " << Message << "\n";
             Error(std::forward<Ts>(Further)...);
         }
     }
+
 };
 
 } // namespace semu

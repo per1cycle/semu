@@ -28,9 +28,9 @@ Cpu::~Cpu()
 
 int Cpu::Run()
 {
-    for (size_t i = 0; i < 4; i++) {
+    for (size_t i = 0; i < 512; i++) {
         int Result = Step();
-        RegisterLayout();
+        // RegisterLayout();
     }
 
     return 0;
@@ -82,15 +82,14 @@ int Cpu::Step()
     }
 
     case 0x13: { // ADDI/SLTI/SLTIU/XORI/ORI/ADDI/SLLI/SRLI/SRAI
-        std::uint8_t rd = RD(IR);
-        std::uint8_t rs1 = RS1(IR);
-        std::uint8_t func3 = FUNC3(IR);
-        std::uint8_t func7 = FUNC7(IR);
+        std::uint32_t rd = RD(IR);
+        std::uint32_t rs1 = RS1(IR);
+        std::uint32_t func3 = FUNC3(IR);
+        std::uint32_t func7 = FUNC7(IR);
         std::int64_t imm = IMM12(IR);
         // imm = imm | ((imm & 0x800) ? 0xfffffffffffff000 : 0);
 
         if (func3 == 0x00) { // ADDI
-            Info("ADDI", "IMM", imm);
             Registers[rd] = static_cast<std::int64_t>(Registers[rs1]) + imm;
         } else if (func3 == 0x2) { // SLTI
         } else if (func3 == 0x3) { // SLTIU
@@ -109,11 +108,11 @@ int Cpu::Step()
         break;
     }
     case 0x33: { // ADD/SUB/SLL/SLT/SLTU/XOR/SRL/SRA/OR/AND
-        std::uint8_t rd = RD(IR);
-        std::uint8_t rs1 = RS1(IR);
-        std::uint8_t rs2 = RS2(IR);
-        std::uint8_t func3 = FUNC3(IR);
-        std::uint8_t func7 = FUNC7(IR);
+        std::uint32_t rd = RD(IR);
+        std::uint32_t rs1 = RS1(IR);
+        std::uint32_t rs2 = RS2(IR);
+        std::uint32_t func3 = FUNC3(IR);
+        std::uint32_t func7 = FUNC7(IR);
 
         if (func3 == 0) { // ADD/SUB
             if (func7 == 0x00) // ADD
