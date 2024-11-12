@@ -19,6 +19,7 @@ std::vector<std::uint8_t> LoadImage(std::string FileName)
 // notice the endian.
 int main(int argc, char const *argv[])
 {
+    std::cout << std::hex;
     std::vector<std::uint8_t> Image = LoadImage("../riscv-tests/isa/rv32ui-p-add");
     size_t Offset = 0x1000;
     

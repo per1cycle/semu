@@ -31,7 +31,7 @@ Cpu::~Cpu()
 
 int Cpu::Run()
 {
-    for (size_t i = 0; i < 16; i++) {
+    for (size_t i = 0; i < 32; i++) {
         int Result = Step();
         // RegisterLayout();
         if (Result)
@@ -44,6 +44,7 @@ int Cpu::Run()
 int Cpu::Step()
 {
     std::uint32_t IR = Fetch();
+    // Info(std::bitset<32>(IR));
     std::uint32_t OPCode = OP(IR);
     // https://github.com/riscv/riscv-opcodes/blob/master/
     // Chapter 37 in riscv manual 2024/04
@@ -62,7 +63,9 @@ int Cpu::Step()
     }
 
     case 0x6f: { // JAL
-        Info("JAL");
+        int32_t TargetAddr = ((IR & 0x80000000)>>11) | ((IR & 0x7fe00000)>>20) | ((IR & 0x00100000)>>9) | ((IR&0x000ff000));
+        if( TargetAddr & 0x00100000 ) TargetAddr |= 0xffe00000; // Sign extension.
+        Info("JAL", "ADDR:", TargetAddr);
         break;
     }
 
@@ -72,17 +75,18 @@ int Cpu::Step()
     }
 
     case 0x63: { // BEQ/BNE/BLT/BGE/BLTU/BGEU
-        Info("BEQ");
         break;
     }
 
     case 0x03: { // LB/LH/LW/LBU/LHU
+        
         Info("LB");
         break;
     }
 
     case 0x23: { // SB/SH/SW
         Info("SB");
+
         break;
     }
 
