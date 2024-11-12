@@ -47,9 +47,8 @@ int Cpu::Step()
     // Info(std::bitset<32>(IR));
     std::uint32_t OPCode = OP(IR);
     // https://github.com/riscv/riscv-opcodes/blob/master/
-    // Chapter 37 in riscv manual 2024/04
+    // and Chapter 37 in riscv manual 2024/04
 
-    // Add Zicsr extension
     switch (OPCode) {
     // rv32i base
     case 0x37: { // LUI
@@ -60,7 +59,7 @@ int Cpu::Step()
 
     case 0x17: { // AUIPC
         Info("AUIPC");
-        
+
         break;
     }
 
@@ -79,6 +78,8 @@ int Cpu::Step()
     }
 
     case 0x63: { // BEQ/BNE/BLT/BGE/BLTU/BGEU
+        // std::uint32_t imm1 = (IR >> 8) & 
+        Info("BEQ");
         break;
     }
 

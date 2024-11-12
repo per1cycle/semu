@@ -13,3 +13,7 @@ add_executable(
 target_link_libraries(
     linux libsemu
 )
+
+if(BUILD_BACKEND)
+    add_subdirectory(backend)
+endif(BUILD_BACKEND)
