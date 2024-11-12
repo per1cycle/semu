@@ -6,6 +6,6 @@
 int main(int argc, char const *argv[])
 {
     semu::Cpu cpu;
-    cpu.LoadImage("Image");
+    cpu.LoadImage("Image", 0x1000);
     return 0;
 }

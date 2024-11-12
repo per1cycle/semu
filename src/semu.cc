@@ -54,11 +54,13 @@ int Cpu::Step()
     // rv32i base
     case 0x37: { // LUI
         Info("LUI");
+
         break;
     }
 
     case 0x17: { // AUIPC
         Info("AUIPC");
+        
         break;
     }
 
