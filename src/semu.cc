@@ -17,7 +17,7 @@ Cpu::Cpu(const std::vector<std::uint8_t>& Image, std::uint32_t Offset)
 {
     Info("Cpu initing...");
     PC = 0;
-    Registers.resize(32, 0);
+    Registers.resize(32, 0x0);
     Memory.resize(64 * 1024 * 1024, 0);
     VirtualPageBase = 0x80000000;
     Info("Register and memory initialized finished.");
@@ -31,9 +31,9 @@ Cpu::~Cpu()
 
 int Cpu::Run()
 {
-    for (size_t i = 0; i < 32; i++) {
+    for (size_t i = 0; i < 64; i++) {
         int Result = Step();
-        // RegisterLayout();
+        RegisterLayout();
         if (Result)
             break;
     }
@@ -65,7 +65,9 @@ int Cpu::Step()
     case 0x6f: { // JAL
         int32_t TargetAddr = ((IR & 0x80000000)>>11) | ((IR & 0x7fe00000)>>20) | ((IR & 0x00100000)>>9) | ((IR&0x000ff000));
         if( TargetAddr & 0x00100000 ) TargetAddr |= 0xffe00000; // Sign extension.
-        Info("JAL", "ADDR:", TargetAddr);
+        PC = TargetAddr - 4;
+        Warning("JAL");
+        Info("PC", PC + 4);
         break;
     }
 
@@ -79,8 +81,8 @@ int Cpu::Step()
     }
 
     case 0x03: { // LB/LH/LW/LBU/LHU
-        
         Info("LB");
+        
         break;
     }
 
@@ -202,8 +204,13 @@ std::uint32_t Cpu::Fetch()
     //      24)));
     return ((U0) | (U1 << 8) | (U2 << 16) | (U3 << 24));
 }
-void Cpu::LoadImage(const std::string& FileName)
+void Cpu::LoadImage(const std::string& FileName, std::uint64_t Offset)
 {
+    std::ifstream File(FileName.c_str(), std::ios::binary);
+    std::vector<std::uint8_t> Image(
+        (std::istreambuf_iterator<char>(File)), 
+        std::istreambuf_iterator<char>()); 
+    std::copy(Image.begin() + Offset, Image.end(), Memory.begin());
 }
 
 void Cpu::MemoryLayout()
@@ -223,7 +230,7 @@ void Cpu::RegisterLayout()
     Info("PC: ", PC, "Registers layout:");
 
     for (size_t i = 0; i < 16; i++) {
-        std::cout << "Register#" << i << ": " << Registers[i] << "\t\t"
+        std::cout << "\tRegister#" << i << ": " << Registers[i] << "\t\t"
                   << "Register#" << i + 16 << ": " << Registers[i + 16] << "\n";
     }
 }

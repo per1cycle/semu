@@ -20,12 +20,6 @@
 
 namespace semu {
 
-enum CpuStatus {
-    OK = 0,
-    TRAP,
-    OFF
-};
-
 class Cpu {
     // in core memory.
 private:
@@ -52,7 +46,7 @@ public:
 
     // helper and tools for debugging.
 public:
-    void LoadImage(const std::string& FileName);
+    void LoadImage(const std::string& FileName, std::uint64_t Offset);
     void RegisterLayout();
     void MemoryLayout();
 
