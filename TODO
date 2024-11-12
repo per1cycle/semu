@@ -1,0 +1,6 @@
+- rv64i
+- rv32m/rv64m
+- rv32a/rv64a
+- output feature.
+- Run linux
+- Add web interface

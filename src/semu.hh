@@ -29,6 +29,7 @@ enum CpuStatus {
 class Cpu {
     // in core memory.
 private:
+    // TODO use std::share_ptr<Memory> and put memory outside.
     std::vector<std::uint8_t> Memory;
     std::uint32_t VirtualPageBase;
 
