@@ -204,6 +204,7 @@ std::uint32_t Cpu::Fetch()
     //      24)));
     return ((U0) | (U1 << 8) | (U2 << 16) | (U3 << 24));
 }
+
 void Cpu::LoadImage(const std::string& FileName, std::uint64_t Offset)
 {
     std::ifstream File(FileName.c_str(), std::ios::binary);
