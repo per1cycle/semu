@@ -53,7 +53,7 @@ int Cpu::Step()
     // rv32i base
     case 0x37: { // LUI
         Info("LUI");
-
+        
         break;
     }
 
