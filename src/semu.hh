@@ -37,7 +37,7 @@ public:
     Cpu();
     Cpu(const std::vector<std::uint8_t>& Image, std::uint32_t OFfset);
     ~Cpu();
-
+    void Logo();
     // core functions.
 public:
     int Run();

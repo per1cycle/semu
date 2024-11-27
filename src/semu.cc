@@ -6,6 +6,8 @@ namespace semu {
 Cpu::Cpu()
 {
     Info("Cpu initing...");
+    Logo();
+
     PC = 0;
     Registers.resize(32, 0);
     Memory.resize(MEM_SIZE, 0);
@@ -16,6 +18,7 @@ Cpu::Cpu()
 Cpu::Cpu(const std::vector<std::uint8_t>& Image, std::uint32_t Offset)
 {
     Info("Cpu initing...");
+    Logo();
     PC = 0;
     Registers.resize(32, 0x0);
     Memory.resize(64 * 1024 * 1024, 0);
@@ -29,11 +32,26 @@ Cpu::~Cpu()
     Info("Power off");
 }
 
+void Cpu::Logo()
+{
+    // http://www.patorjk.com/software/taag/#p=display&f=Big&t=Semu
+    std::string Logo = 
+    "\n\
+     _____                      \n\
+    / ____|                     \n\
+    | (___   ___ _ __ ___  _   _ \n\
+    \\___ \\ / _ \\ '_ ` _ \\| | | |\n\
+     ____) |  __/ | | | | | |_| |\n\
+    |_____/ \\___|_| |_| |_|\\__,_|\n\
+                                \n\
+                                ";
+    std::cout << Logo << std::endl;
+}
+
 int Cpu::Run()
 {
-    for (size_t i = 0; i < 64; i++) {
+    for (size_t i = 0; i < 8; i++) {
         int Result = Step();
-        RegisterLayout();
         if (Result)
             break;
     }
