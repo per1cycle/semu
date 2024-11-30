@@ -72,7 +72,7 @@ int Cpu::Step()
     case 0x37: { // LUI
         Info("LUI");
         
-        break;
+        break;  
     }
 
     case 0x17: { // AUIPC
@@ -82,7 +82,7 @@ int Cpu::Step()
     }
 
     case 0x6f: { // JAL
-        int32_t TargetAddr = ((IR & 0x80000000)>>11) | ((IR & 0x7fe00000)>>20) | ((IR & 0x00100000)>>9) | ((IR&0x000ff000));
+        std::int32_t TargetAddr = ((IR & 0x80000000)>>11) | ((IR & 0x7fe00000)>>20) | ((IR & 0x00100000)>>9) | ((IR&0x000ff000));
         if( TargetAddr & 0x00100000 ) TargetAddr |= 0xffe00000; // Sign extension.
         PC = TargetAddr - 4;
         Warning("JAL");
@@ -91,13 +91,36 @@ int Cpu::Step()
     }
 
     case 0x67: { // JALR
-        Info("JALR");
+
         break;
     }
 
     case 0x63: { // BEQ/BNE/BLT/BGE/BLTU/BGEU
         // std::uint32_t imm1 = (IR >> 8) & 
-        Info("BEQ");
+        std::uint32_t op = OP(IR);
+        std::uint32_t rs1 = RS1(IR);
+        std::uint32_t rs2 = RS2(IR);
+        std::uint32_t func3 = FUNC3(IR);
+        // get imm
+        std::uint32_t imm = GET_BIT_FROM(IR, 8, 11)             // 1-4
+                            | (GET_BIT_FROM(IR, 25, 30) << 4)   // 5-10
+                            | (GET_BIT_FROM(IR, 7, 7) << 10)    // 11
+                            | (GET_BIT_FROM(IR, 31, 31) << 11); // 12
+
+        if(func3 == 0x0 && Registers[rs1] == Registers[rs2]) { // BEQ
+            PC = imm;
+        } else if(func3 == 0x1 && Registers[rs1] != Registers[rs2]) { // BNE
+            PC = imm;
+        } else if(func3 ==  0x4 && static_cast<std::int64_t>(Registers[rs1]) < static_cast<std::int64_t>(Registers[rs2]) ) { // BLT
+            PC = imm;
+        } else if(func3 == 0x5 && static_cast<std::int64_t>(Registers[rs1]) >= static_cast<std::int64_t>(Registers[rs2])) { // BGE
+            PC = imm;
+        } else if(func3 == 0x6 && Registers[rs1] < Registers[rs2]) { // BLTU
+            PC = imm;
+        } else if(func3 == 0x7 && Registers[rs1] >= Registers[rs2]) {  // BGEU
+            PC = imm;
+        }
+
         break;
     }
 
@@ -180,7 +203,7 @@ int Cpu::Step()
     }
 
     // rv64i extension, in addition to rv32i
-
+    
     // rv32m extension.
 
     // rv64m extension, in addition to rv32m
