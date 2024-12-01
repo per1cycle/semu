@@ -14,6 +14,15 @@ target_link_libraries(
     linux libsemu
 )
 
+
+add_executable(
+    playground
+    playground.cc
+)
+target_link_libraries(
+    playground libsemu
+)
+
 if(BUILD_BACKEND)
     add_subdirectory(backend)
 endif(BUILD_BACKEND)

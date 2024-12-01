@@ -50,10 +50,10 @@ void Cpu::Logo()
 
 int Cpu::Run()
 {
-    for (size_t i = 0; i < 128; i++) {
-        int Result = Step();
-        if (Result)
-            break;
+    for (size_t i = 0; i < 1; i++) {
+        // int Result = Step();
+        // if (Result)
+        //     break;
     }
 
     return 0;
@@ -80,13 +80,30 @@ int Cpu::Step()
     case 0x17: { // AUIPC
         Info("AUIPC");
         std::uint32_t rd = RD(IR);
-        
+        std::uint32_t imm = static_cast<std::int64_t>(GET_BIT_FROM(IR, 12, 31));
+        Registers[rd] = PC + imm;
         break;
     }
 
     case 0x6f: { // JAL
-        std::int32_t TargetAddr = ((IR & 0x80000000)>>11) | ((IR & 0x7fe00000)>>20) | ((IR & 0x00100000)>>9) | ((IR&0x000ff000));
+        // std::int32_t TargetAddr = ((IR & 0x80000000)>>11) | ((IR & 0x7fe00000)>>20) | ((IR & 0x00100000)>>9) | ((IR&0x000ff000));
+        std::int32_t TargetAddr = (
+                                    (GET_BIT_FROM(IR, 21, 30)) | 
+                                    (GET_BIT_FROM(IR, 20, 20) << 10) |
+                                    (GET_BIT_FROM(IR, 12, 19) << 11) |
+                                    (GET_BIT_FROM(IR, 31, 31) << 19));
+                                    
         if( TargetAddr & 0x00100000 ) TargetAddr |= 0xffe00000; // Sign extension.
+        // if( TargetAddrFoo & 0x00100000 ) TargetAddrFoo |= 0xffe00000; // Sign extension.
+
+        // if(TargetAddr != TargetAddrFoo)
+        //  Error("Error in get bit!", 
+        //     "PC",
+        //     PC,
+        //     "IR",
+        //     std::bitset<32>(IR),
+        //     std::bitset<32>(TargetAddr),
+        //     std::bitset<32>(TargetAddrFoo));
         PC = TargetAddr - 4;
         Warning("JAL");
         Info("PC", PC + 4);

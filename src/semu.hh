@@ -4,7 +4,7 @@
 #define MEM_SIZE (64 * 1024 * 1024)
 
 // get ir from low to high. [LOW, HIGH]
-#define GET_BIT_FROM(IR, LOW, HIGH) (((IR) >> (LOW)) & ((HIGH - LOW + 1) - 1))
+#define GET_BIT_FROM(IR, LOW, HIGH) (((IR) >> (LOW)) & ((1 << ((HIGH) - (LOW) + 1)) - 1))
 
 #define OP(IR) ((IR)&0x7f)
 #define RD(IR) (((IR) >> 7) & 0x1f)
