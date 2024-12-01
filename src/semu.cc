@@ -50,7 +50,7 @@ void Cpu::Logo()
 
 int Cpu::Run()
 {
-    for (size_t i = 0; i < 8; i++) {
+    for (size_t i = 0; i < 128; i++) {
         int Result = Step();
         if (Result)
             break;
@@ -68,16 +68,19 @@ int Cpu::Step()
     // and Chapter 37 in riscv manual 2024/04
 
     switch (OPCode) {
+    // https://stackoverflow.com/questions/52574537/risc-v-pc-absolute-vs-pc-relative
     // rv32i base
     case 0x37: { // LUI
         Info("LUI");
-        
-        break;  
+        std::uint32_t rd = RD(IR);
+        Registers[rd] = static_cast<std::uint64_t>(GET_BIT_FROM(IR, 12, 31));
+        break;
     }
 
     case 0x17: { // AUIPC
         Info("AUIPC");
-
+        std::uint32_t rd = RD(IR);
+        
         break;
     }
 
@@ -199,13 +202,14 @@ int Cpu::Step()
         } else if (func3 == 0x7) { // AND
             Registers[rd] = Registers[rs1] & Registers[rs2];
         }
+
+        // rv32m extension.
+
         break;
     }
 
     // rv64i extension, in addition to rv32i
     
-    // rv32m extension.
-
     // rv64m extension, in addition to rv32m
 
     // rv32a extension.
