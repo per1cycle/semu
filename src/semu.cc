@@ -50,8 +50,10 @@ void Cpu::Logo()
 
 int Cpu::Run()
 {
-    for (size_t i = 0; i < 1; i++) {
+    for (size_t i = 0; i < 256; i++) {
         int Result = Step();
+        Info(PC);
+        // RegisterLayout();
         if (Result)
             break;
     }
@@ -78,7 +80,7 @@ int Cpu::Step()
     }
 
     case 0x17: { // AUIPC
-        Info("AUIPC");
+        // Info("AUIPC");
         std::uint32_t rd = RD(IR);
         std::uint32_t imm = static_cast<std::int64_t>(GET_BIT_FROM(IR, 12, 31) << 12);
         Registers[rd] = PC + imm;
@@ -86,24 +88,24 @@ int Cpu::Step()
     }
 
     case 0x6f: { // JAL
-        std::int32_t TargetAddr = ((IR & 0x80000000)>>11) | ((IR & 0x7fe00000)>>20) | ((IR & 0x00100000)>>9) | ((IR&0x000ff000));
-        std::int32_t TargetAddrFoo = (
+        // std::int32_t TargetAddr = ((IR & 0x80000000)>>11) | ((IR & 0x7fe00000)>>20) | ((IR & 0x00100000)>>9) | ((IR&0x000ff000));
+        std::int32_t TargetAddr = (
                                     (GET_BIT_FROM(IR, 21, 30) << 1) | 
                                     (GET_BIT_FROM(IR, 20, 20) << 11) |
                                     (GET_BIT_FROM(IR, 12, 19) << 12) |
                                     (GET_BIT_FROM(IR, 31, 31) << 20));
                                     
         if( TargetAddr & 0x00100000 ) TargetAddr |= 0xffe00000; // Sign extension.
-        if( TargetAddrFoo & 0x00100000 ) TargetAddrFoo |= 0xffe00000; // Sign extension.
+        // if( TargetAddrFoo & 0x00100000 ) TargetAddrFoo |= 0xffe00000; // Sign extension.
 
-        if(TargetAddr != TargetAddrFoo)
-         Error("Error in get bit!", 
-            "PC",
-            PC,
-            "IR",
-            IR,
-            std::bitset<32>(TargetAddr),
-            std::bitset<32>(TargetAddrFoo));
+        // if(TargetAddr != TargetAddrFoo)
+        //  Error("Error in get bit!", 
+        //     "PC",
+        //     PC,
+        //     "IR",
+        //     IR,
+        //     std::bitset<32>(TargetAddr),
+        //     std::bitset<32>(TargetAddrFoo));
         PC = TargetAddr - 4;
         Warning("JAL");
         Info("PC", PC + 4);
@@ -111,7 +113,7 @@ int Cpu::Step()
     }
 
     case 0x67: { // JALR
-
+ 
         break;
     }
 
@@ -145,13 +147,13 @@ int Cpu::Step()
     }
 
     case 0x03: { // LB/LH/LW/LBU/LHU
-        Info("LB");
+        Info("LB Not implemented");
         
         break;
     }
 
     case 0x23: { // SB/SH/SW
-        Info("SB");
+        Info("SB Not implemented");
 
         break;
     }
@@ -225,6 +227,10 @@ int Cpu::Step()
         break;
     }
 
+    case 0x0f: { // Fence
+        Info("Fence not implemented");
+        break;
+    }
     // rv64i extension, in addition to rv32i
     
     // rv64m extension, in addition to rv32m
@@ -235,13 +241,13 @@ int Cpu::Step()
 
     // zicsr
     case 0x73: { // CSR
-        Info("CSR");
+        Info("CSR Not implemented.");
         break;
     }
 
     default: { // INVALID
         Error(PC, "Instruction not found.", std::bitset<8>(OP(IR)));
-        break;
+        return -1;
     }
     }
 
@@ -279,6 +285,7 @@ void Cpu::LoadImage(const std::string& FileName, std::uint64_t Offset)
     std::copy(Image.begin() + Offset, Image.end(), Memory.begin());
 }
 
+// TODO move to utils.
 void Cpu::MemoryLayout()
 {
     Info("PC: ", PC, "Memory layout:");
