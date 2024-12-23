@@ -47,7 +47,13 @@ public:
     int Step();
     std::uint32_t Fetch();
 
-    // helper and tools for debugging.
+// getter.
+public:
+    const std::uint64_t& GetPC() const;
+    const std::vector<std::uint64_t>& GetRegs() const;
+    // optimize for large memcpy.
+    const std::vector<std::uint8_t>& GetMem() const;
+// helper and tools for debugging.
 public:
     void LoadImage(const std::string& FileName, std::uint64_t Offset);
     void RegisterLayout();

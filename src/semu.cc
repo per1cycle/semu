@@ -95,10 +95,10 @@ int Cpu::Step()
                                     (GET_BIT_FROM(IR, 12, 19) << 12) |
                                     (GET_BIT_FROM(IR, 31, 31) << 20));
                                     
-        if( TargetAddr & 0x00100000 ) TargetAddr |= 0xffe00000; // Sign extension.
-        // if( TargetAddrFoo & 0x00100000 ) TargetAddrFoo |= 0xffe00000; // Sign extension.
+        if ( TargetAddr & 0x00100000 ) TargetAddr |= 0xffe00000; // Sign extension.
+        // if ( TargetAddrFoo & 0x00100000 ) TargetAddrFoo |= 0xffe00000; // Sign extension.
 
-        // if(TargetAddr != TargetAddrFoo)
+        // if (TargetAddr != TargetAddrFoo)
         //  Error("Error in get bit!", 
         //     "PC",
         //     PC,
@@ -129,17 +129,17 @@ int Cpu::Step()
                             | (GET_BIT_FROM(IR, 7, 7) << 11)    // 11
                             | (GET_BIT_FROM(IR, 31, 31) << 12); // 12
 
-        if(func3 == 0x0 && Registers[rs1] == Registers[rs2]) { // BEQ
+        if (func3 == 0x0 && Registers[rs1] == Registers[rs2]) { // BEQ
             PC = imm;
-        } else if(func3 == 0x1 && Registers[rs1] != Registers[rs2]) { // BNE
+        } else if (func3 == 0x1 && Registers[rs1] != Registers[rs2]) { // BNE
             PC = imm;
-        } else if(func3 ==  0x4 && static_cast<std::int64_t>(Registers[rs1]) < static_cast<std::int64_t>(Registers[rs2]) ) { // BLT
+        } else if (func3 ==  0x4 && static_cast<std::int64_t>(Registers[rs1]) < static_cast<std::int64_t>(Registers[rs2]) ) { // BLT
             PC = imm;
-        } else if(func3 == 0x5 && static_cast<std::int64_t>(Registers[rs1]) >= static_cast<std::int64_t>(Registers[rs2])) { // BGE
+        } else if (func3 == 0x5 && static_cast<std::int64_t>(Registers[rs1]) >= static_cast<std::int64_t>(Registers[rs2])) { // BGE
             PC = imm;
-        } else if(func3 == 0x6 && Registers[rs1] < Registers[rs2]) { // BLTU
+        } else if (func3 == 0x6 && Registers[rs1] < Registers[rs2]) { // BLTU
             PC = imm;
-        } else if(func3 == 0x7 && Registers[rs1] >= Registers[rs2]) {  // BGEU
+        } else if (func3 == 0x7 && Registers[rs1] >= Registers[rs2]) {  // BGEU
             PC = imm;
         }
 
@@ -147,13 +147,34 @@ int Cpu::Step()
     }
 
     case 0x03: { // LB/LH/LW/LBU/LHU
-        Info("LB Not implemented");
+        std::uint32_t func3 = FUNC3(IR);
         
+        if (func3 == 0x0) { // LB
+
+        } else if (func3 == 0x1) { // LH
+
+        } else if (func3 == 0x2) { // LW
+
+        } else if (func3 == 0x4) { // LBU
+
+        } else if (func3 == 0x5) { // LHU
+
+        }
+
         break;
     }
 
     case 0x23: { // SB/SH/SW
         Info("SB Not implemented");
+        std::uint32_t func3 = FUNC3(IR);
+        
+        if (func3 == 0x0) { // SB
+
+        } else if (func3 == 0x1) { // SH
+
+        } else if (func3 == 0x2) { // SW
+
+        }
 
         break;
     }
@@ -284,6 +305,12 @@ void Cpu::LoadImage(const std::string& FileName, std::uint64_t Offset)
         std::istreambuf_iterator<char>()); 
     std::copy(Image.begin() + Offset, Image.end(), Memory.begin());
 }
+
+const std::uint64_t& Cpu::GetPC() const { return PC; }
+
+const std::vector<std::uint64_t>& Cpu::GetRegs() const { return Registers; }
+// optimize for large memcpy.
+const std::vector<std::uint8_t>& Cpu::GetMem() const { return Memory; }
 
 // TODO move to utils.
 void Cpu::MemoryLayout()
