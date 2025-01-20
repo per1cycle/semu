@@ -9,7 +9,7 @@ Cpu::Cpu()
     Logo();
 
     PC = 0;
-    Registers.resize(32, 0);
+    Registers.resize(32, 0x0);
     Memory.resize(MEM_SIZE, 0);
     VirtualPageBase = 0x80000000;
     Info("Register and memory initialized finished.");
@@ -89,8 +89,7 @@ int Cpu::Step()
 
     case 0x6f: { // JAL
         // std::int32_t TargetAddr = ((IR & 0x80000000)>>11) | ((IR & 0x7fe00000)>>20) | ((IR & 0x00100000)>>9) | ((IR&0x000ff000));
-        std::int32_t TargetAddr = (
-                                    (GET_BIT_FROM(IR, 21, 30) << 1) | 
+        std::int32_t TargetAddr = ((GET_BIT_FROM(IR, 21, 30) << 1) | 
                                     (GET_BIT_FROM(IR, 20, 20) << 11) |
                                     (GET_BIT_FROM(IR, 12, 19) << 12) |
                                     (GET_BIT_FROM(IR, 31, 31) << 20));
@@ -113,7 +112,7 @@ int Cpu::Step()
     }
 
     case 0x67: { // JALR
- 
+
         break;
     }
 
@@ -124,7 +123,7 @@ int Cpu::Step()
         std::uint32_t rs2 = RS2(IR);
         std::uint32_t func3 = FUNC3(IR);
         // get imm
-        std::uint32_t imm = GET_BIT_FROM(IR, 8, 11) << 1             // 1-4
+        std::uint32_t imm = GET_BIT_FROM(IR, 8, 11) << 1        // 1-4
                             | (GET_BIT_FROM(IR, 25, 30) << 5)   // 5-10
                             | (GET_BIT_FROM(IR, 7, 7) << 11)    // 11
                             | (GET_BIT_FROM(IR, 31, 31) << 12); // 12
@@ -148,7 +147,8 @@ int Cpu::Step()
 
     case 0x03: { // LB/LH/LW/LBU/LHU
         std::uint32_t func3 = FUNC3(IR);
-        
+        std::uint32_t rs1 = RS1(IR);
+
         if (func3 == 0x0) { // LB
 
         } else if (func3 == 0x1) { // LH
@@ -179,7 +179,7 @@ int Cpu::Step()
         break;
     }
 
-    case 0x13: { // ADDI/SLTI/SLTIU/XORI/ORI/ADDI/SLLI/SRLI/SRAI
+    case 0x13: { // ADDI/SLTI/SLTIU/XORI/ORI/ANDI/SLLI/SRLI/SRAI
         std::uint32_t rd = RD(IR);
         std::uint32_t rs1 = RS1(IR);
         std::uint32_t func3 = FUNC3(IR);

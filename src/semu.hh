@@ -6,8 +6,8 @@
 // get ir from low to high. [LOW, HIGH]
 #define GET_BIT_FROM(IR, LOW, HIGH) (((IR) >> (LOW)) & ((1 << ((HIGH) - (LOW) + 1)) - 1))
 
-#define OP(IR) ((IR)&0x7f)
-#define RD(IR) (((IR) >> 7) & 0x1f)
+#define OP(IR)  ((IR)&0x7f)
+#define RD(IR)  (((IR) >> 7) & 0x1f)
 #define RS1(IR) (((IR) >> 15) & 0x1f)
 #define RS2(IR) (((IR) >> 20) & 0x1f)
 #define FUNC3(IR) (((IR) >> 12) & 0x7)

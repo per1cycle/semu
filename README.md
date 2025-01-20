@@ -17,7 +17,7 @@ Slow EMUlator(opposite of qemu, education purpose mainly, though it might not be
 ├── LICENSE
 ├── README.md
 ├── riscv-tests // submodule of tests binary file
-└── src
+└── src // TODO: seperated semu.cc
     ├── CMakeLists.txt
     ├── semu.cc
     └── semu.hh
