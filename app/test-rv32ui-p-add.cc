@@ -16,11 +16,18 @@ std::vector<std::uint8_t> LoadImage(std::string FileName)
         std::istreambuf_iterator<char>()
     );
 }
+
 // notice the endian.
 int main(int argc, char const *argv[])
 {
+    if(argc < 2)
+    {
+        std::cerr << "Usage: ./app <path to riscv binary file>\n";
+        return 1;
+    }
+
     std::cout << std::hex;
-    std::vector<std::uint8_t> Image = LoadImage("../riscv-tests/isa/rv32ui-p-add");
+    std::vector<std::uint8_t> Image = LoadImage(std::string(argv[1]));
     size_t Offset = 0x1000;
     
     semu::Cpu cpu = semu::Cpu(Image, Offset);
