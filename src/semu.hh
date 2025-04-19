@@ -13,6 +13,7 @@
 #define FUNC3(IR) (((IR) >> 12) & 0x7)
 #define FUNC7(IR) (((IR) >> 25) & 0x3f)
 #define IMM12(IR) (((IR) >> 20) & 0xfff)
+#define CSR(IR) (IMM12(IR))
 
 #include <fstream>
 #include <iomanip>
@@ -34,6 +35,7 @@ private:
     // register alias name https://en.wikichip.org/wiki/risc-v/registers
 private:
     std::vector<std::uint64_t> Registers;
+    std::vector<std::uint32_t> CSRs;
     std::uint64_t PC;
 
 public:
@@ -63,7 +65,7 @@ public:
     void Info(T&& Message, Ts&&... Further)
     {
         if constexpr (sizeof...(Ts) == 0) {
-            std::cout << "[\033[1;32mINFO\033[1;37m]: " << Message << "\n";
+            std::cout << "[\033[1;32mINFO\033[1;37m]: " << std::setw(8) << std::setfill('0') << Message << "\n";
         } else {
             std::cout << "[\033[1;32mINFO\033[1;37m]: " << Message << "\n";
             Info(std::forward<Ts>(Further)...);

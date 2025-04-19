@@ -10,6 +10,7 @@ Cpu::Cpu()
 
     PC = 0;
     Registers.resize(32, 0x0);
+    CSRs.resize(4096);
     Memory.resize(MEM_SIZE, 0);
     VirtualPageBase = 0x80000000;
     Info("Register and memory initialized finished.");
@@ -52,7 +53,7 @@ int Cpu::Run()
 {
     for (size_t i = 0; i < 256; i++) {
         int Result = Step();
-        Info(PC);
+        // Info(PC);
         // RegisterLayout();
         if (Result)
             break;
@@ -64,7 +65,7 @@ int Cpu::Run()
 int Cpu::Step()
 {
     std::uint32_t IR = Fetch();
-    // Info(std::bitset<32>(IR));
+    // Info(IR);
     std::uint32_t OPCode = OP(IR);
     // https://github.com/riscv/riscv-opcodes/blob/master/
     // and Chapter 37 in riscv manual 2024/04
@@ -112,7 +113,7 @@ int Cpu::Step()
     }
 
     case 0x67: { // JALR
-
+        
         break;
     }
 
@@ -263,6 +264,23 @@ int Cpu::Step()
     // zicsr
     case 0x73: { // CSR
         Info("CSR Not implemented.");
+        std::uint8_t rd = RD(IR);
+        std::uint8_t func3 = FUNC3(IR);
+        std::uint16_t csr = CSR(IR);
+        std::uint8_t rs1 = RS1(IR);
+        if(func3 == 0x1) { // CSRRW
+
+        } else if (func3 == 0x2) { //CSRRS
+
+        } else if (func3 == 0x3) { // CSRRC
+
+        } else if (func3 == 0x5) { // CSRRWI
+
+        } else if (func3 == 0x6) { // CSRRSI
+
+        } else if (func3 ==0x7) { // CSRRCI
+            
+        }
         break;
     }
 
